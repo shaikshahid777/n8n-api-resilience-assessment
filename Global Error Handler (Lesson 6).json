@@ -1,0 +1,89 @@
+{
+  "name": "Global Error Handler (Lesson 6)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "3b1c6a87-5074-41e6-a2dc-7dd72d5cdabd",
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "exec-id",
+              "name": "executionId",
+              "type": "string",
+              "value": "={{ $json.execution.id }}"
+            },
+            {
+              "id": "wf-id",
+              "name": "workflowId",
+              "type": "string",
+              "value": "={{ $json.workflow.id }}"
+            },
+            {
+              "id": "wf-name",
+              "name": "workflowName",
+              "type": "string",
+              "value": "={{ $json.workflow.name }}"
+            },
+            {
+              "id": "failed-node",
+              "name": "failedNode",
+              "type": "string",
+              "value": "={{ $json.execution.lastNodeExecuted }}"
+            },
+            {
+              "id": "err-msg",
+              "name": "errorMessage",
+              "type": "string",
+              "value": "={{ $json.execution.error?.message }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "302da1ad-e410-4481-984a-9ecc378300c2",
+      "name": "Capture Error Details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Capture Error Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7c5af208-7a87-42bd-96fd-95f6e44917e4",
+  "meta": {
+    "instanceId": "201381d913fa9e78389f7093cb99cedc70c766251a500f897db19feccfda3bd0"
+  },
+  "nodeGroups": [],
+  "id": "vDDZ69fod33htj1R",
+  "tags": []
+}

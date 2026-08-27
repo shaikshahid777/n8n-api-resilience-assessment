@@ -1,0 +1,164 @@
+{
+  "name": "Resilient API Integration (Lesson 6)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "ffc807a7-0ccf-4a2f-a1e8-8b4e29729b69",
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://jsonplaceholder.typicode.com/todos/1",
+        "options": {}
+      },
+      "id": "facfd956-5aec-4281-ab86-1059aee67b52",
+      "name": "Fetch With Retries",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "url": "https://httpstat.us/500",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "2a6e7634-b0a7-4f26-9b79-036b65d6d3b8",
+      "name": "Call That May Fail (Continue On Fail)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "4186bdb9-94e9-4cd5-82ac-ec5347c8936b",
+      "name": "Throttle (Wait 2s)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        0
+      ],
+      "webhookId": "b7248d18-be33-4499-bef7-ee5bace49124"
+    },
+    {
+      "parameters": {
+        "url": "https://reqres.in/api/users",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "per_page",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "name": "page",
+                    "value": "={{ $pageCount + 1 }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ $response.body.data.length === 0 }}",
+              "limitPagesFetched": true,
+              "maxRequests": 5,
+              "requestInterval": 1000
+            }
+          }
+        }
+      },
+      "id": "744cd0aa-9410-480c-a9ab-622b247829fd",
+      "name": "Fetch Paginated Users",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Fetch With Retries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch With Retries": {
+      "main": [
+        [
+          {
+            "node": "Call That May Fail (Continue On Fail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call That May Fail (Continue On Fail)": {
+      "main": [
+        [
+          {
+            "node": "Throttle (Wait 2s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Throttle (Wait 2s)": {
+      "main": [
+        [
+          {
+            "node": "Fetch Paginated Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a8c4a93f-8486-4d9a-ae78-610a1d8f00d6",
+  "meta": {
+    "instanceId": "201381d913fa9e78389f7093cb99cedc70c766251a500f897db19feccfda3bd0"
+  },
+  "nodeGroups": [],
+  "id": "61nlqOCBy8cDQwuV",
+  "tags": []
+}
